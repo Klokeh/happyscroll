@@ -1,54 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HappyScroll</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin: 2em; }
-    #post { margin: 2em auto; max-width: 600px; }
-    button { margin: 1em; padding: 10px 20px; }
+    body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+    .post { margin-bottom: 20px; }
+    button { margin: 5px; padding: 10px 20px; font-size: 16px; }
   </style>
 </head>
 <body>
   <h1>HappyScroll</h1>
-  <div id="post">Click "Load Saved" to begin.</div>
-  <button onclick="loadSaved()">Load Saved</button>
-  <button onclick="prevPost()">Previous</button>
-  <button onclick="nextPost()">Next</button>
+  <div id="post" class="post">Loading...</div>
+  <button id="prev">Previous</button>
+  <button id="next">Next</button>
+  <button id="shuffle">Shuffle Deck</button>
 
   <script>
-    async function loadSaved() {
-      const res = await fetch('/api/load');
-      const data = await res.json();
-      displayPost(data.post);
-    }
+    let currentPost = null;
 
-    async function nextPost() {
-      const res = await fetch('/api/next');
+    async function loadPost(url) {
+      const res = await fetch(url);
       const data = await res.json();
-      displayPost(data.post);
-    }
-
-    async function prevPost() {
-      const res = await fetch('/api/prev');
-      const data = await res.json();
-      displayPost(data.post);
-    }
-
-    function displayPost(post) {
-      if (!post) {
-        document.getElementById('post').innerText = 'No posts available.';
-        return;
+      if (data.error) {
+        document.getElementById('post').innerText = data.error;
+      } else {
+        currentPost = data.post.data;
+        document.getElementById('post').innerHTML = `<a href="https://reddit.com${currentPost.permalink}" target="_blank">${currentPost.title}</a>`;
       }
-      const data = post.data;
-      const link = `https://reddit.com${data.permalink}`;
-      document.getElementById('post').innerHTML = `
-        <h2>${data.title}</h2>
-        <p>Subreddit: ${data.subreddit}</p>
-        <a href="${link}" target="_blank">View on Reddit</a>
-      `;
     }
+
+    document.getElementById('next').addEventListener('click', () => loadPost('/api/next'));
+    document.getElementById('prev').addEventListener('click', () => loadPost('/api/prev'));
+    document.getElementById('shuffle').addEventListener('click', () => loadPost('/api/load'));
+
+    loadPost('/api/load');
   </script>
 </body>
 </html>

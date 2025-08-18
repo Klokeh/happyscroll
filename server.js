@@ -39,7 +39,7 @@ async function getAccessToken() {
 }
 
 // Fetch saved posts from Reddit
-async function fetchSavedPosts() {
+/*async function fetchSavedPosts() {
   const token = await getAccessToken();
   const response = await axios.get('https://oauth.reddit.com/user/me/saved?limit=100', {
     headers: {
@@ -55,8 +55,36 @@ console.log('Raw Reddit response:', JSON.stringify(response.data, null, 2));
     //filter(item => item.kind === 't3');
   shufflePosts();
   currentIndex = 0;
-}
+}*/
+async function fetchSavedPosts() {
+  try {
+    // 1️⃣ Get access token
+    const token = await getAccessToken();
+    console.log('✅ Access token retrieved:', token);
 
+    // 2️⃣ Fetch saved posts from Reddit
+    const response = await axios.get('https://oauth.reddit.com/user/me/saved?limit=100', {
+      headers: {
+        Authorization: `bearer ${token}`,
+        'User-Agent': process.env.USER_AGENT
+      }
+    });
+
+    // 3️⃣ Log the full raw response
+    console.log('🔹 Raw Reddit response:', JSON.stringify(response.data, null, 2));
+
+    // 4️⃣ Filter posts (kind === t3)
+    savedPosts = response.data.data.children.filter(item => item.kind === 't3');
+    console.log(`🔹 Number of posts after filtering t3: ${savedPosts.length}`);
+
+    // 5️⃣ Shuffle posts
+    shufflePosts();
+    currentIndex = 0;
+
+  } catch (err) {
+    console.error('❌ Error fetching saved posts:', err.response?.data || err.message);
+  }
+}
 // Shuffle saved posts
 function shufflePosts() {
   for (let i = savedPosts.length - 1; i > 0; i--) {

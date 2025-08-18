@@ -61,6 +61,8 @@ async function fetchSavedPosts() {
     // 1️⃣ Get access token
     const token = await getAccessToken();
     console.log('✅ Access token retrieved:', token);
+    // TEMP: check token (for debugging)
+console.log('Access token scopes (for debugging):', token);
 
     // 2️⃣ Fetch saved posts from Reddit
     const response = await axios.get('https://oauth.reddit.com/user/me/saved?limit=100', {

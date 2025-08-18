@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HappyScroll</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 2em; }
+    #post { margin: 2em auto; max-width: 600px; }
+    button { margin: 1em; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h1>HappyScroll</h1>
+  <div id="post">Click "Load Saved" to begin.</div>
+  <button onclick="loadSaved()">Load Saved</button>
+  <button onclick="prevPost()">Previous</button>
+  <button onclick="nextPost()">Next</button>
+
+  <script>
+    async function loadSaved() {
+      const res = await fetch('/api/load');
+      const data = await res.json();
+      displayPost(data.post);
+    }
+
+    async function nextPost() {
+      const res = await fetch('/api/next');
+      const data = await res.json();
+      displayPost(data.post);
+    }
+
+    async function prevPost() {
+      const res = await fetch('/api/prev');
+      const data = await res.json();
+      displayPost(data.post);
+    }
+
+    function displayPost(post) {
+      if (!post) {
+        document.getElementById('post').innerText = 'No posts available.';
+        return;
+      }
+      const data = post.data;
+      const link = `https://reddit.com${data.permalink}`;
+      document.getElementById('post').innerHTML = `
+        <h2>${data.title}</h2>
+        <p>Subreddit: ${data.subreddit}</p>
+        <a href="${link}" target="_blank">View on Reddit</a>
+      `;
+    }
+  </script>
+</body>
+</html>

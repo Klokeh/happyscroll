@@ -1,0 +1,5 @@
+PORT=3000
+CLIENT_ID=your_client_id
+CLIENT_SECRET=your_client_secret
+USER_AGENT=web:happyscroll:v1.0 (by /u/YOUR_USERNAME)
+REFRESH_TOKEN=your_refresh_token

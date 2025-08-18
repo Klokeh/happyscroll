@@ -45,9 +45,12 @@ async function fetchSavedPosts() {
       'User-Agent': process.env.USER_AGENT
     }
   });
-
+  
+console.log('Raw Reddit response:', JSON.stringify(response.data, null, 2));
+  
   // Only include posts (t3), ignore comments
-  savedPosts = response.data.data.children.filter(item => item.kind === 't3');
+  savedPosts = response.data.data.children;
+    //filter(item => item.kind === 't3');
   shufflePosts();
   currentIndex = 0;
 }

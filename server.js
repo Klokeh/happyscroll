@@ -27,6 +27,7 @@ async function getAccessToken() {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     });
+console.log("✅ Access token retrieved:", response.data);
 
     return response.data.access_token;
   } catch (err) {

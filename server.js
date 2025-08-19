@@ -78,12 +78,12 @@ async function fetchSavedPosts() {
   }
 }
 
-// ---------- Merge Reddit video + audio ----------
+// ---------- Merge video + audio if available ----------
 async function mergeVideoAudio(post) {
   if (!post.is_video || !post.media?.reddit_video) return null;
 
   const videoUrl = post.media.reddit_video.fallback_url;
-  const audioUrl = videoUrl.replace(/DASH_[0-9]+.mp4/, 'DASH_audio.mp4'); // typical Reddit audio URL
+  const audioUrl = videoUrl.replace(/DASH_[0-9]+.mp4/, 'DASH_audio.mp4'); // Reddit audio
 
   const outputDir = path.join(__dirname, 'videos');
   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
@@ -92,13 +92,20 @@ async function mergeVideoAudio(post) {
 
   if (fs.existsSync(outputFile)) return `/videos/${post.id}.mp4`;
 
-  // Use ffmpeg to merge
-  return new Promise((resolve, reject) => {
+  // Check if audio exists
+  try {
+    await axios.head(audioUrl);
+  } catch {
+    return videoUrl; // audio doesn't exist, return video-only
+  }
+
+  // Merge with ffmpeg
+  return new Promise((resolve) => {
     const cmd = `ffmpeg -y -i "${videoUrl}" -i "${audioUrl}" -c:v copy -c:a aac "${outputFile}"`;
     exec(cmd, (err) => {
       if (err) {
         console.error('❌ ffmpeg merge error:', err);
-        resolve(null); // fallback to video-only
+        resolve(videoUrl); // fallback to video-only
       } else {
         resolve(`/videos/${post.id}.mp4`);
       }
@@ -120,16 +127,17 @@ app.get('/api/shuffle', async (req, res) => {
   const post = savedPosts[randomIndex];
 
   if (post.is_video) {
-    const mergedUrl = await mergeVideoAudio(post);
-    if (mergedUrl) post.url = mergedUrl; // serve merged video
+    post.url = await mergeVideoAudio(post);
   }
 
   res.json({ post });
 });
 
+// ---------- Start server ----------
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
 
 /*
 const express = require('express');

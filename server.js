@@ -92,3 +92,4 @@ app.get('/api/prev', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Happyscroll running on port ${PORT}`);
 });
+getAccessToken();

@@ -1,5 +1,4 @@
 // public/script.js
-// public/script.js
 let currentPost = null;
 
 async function loadPosts() {
@@ -64,6 +63,7 @@ function displayPost(post) {
 }
 
 window.onload = loadPosts;
+
 
 /*
 let currentPost = null;

@@ -24,7 +24,10 @@ async function getAccessToken() {
 
     const response = await axios.post('https://www.reddit.com/api/v1/access_token', params, {
       auth: { username: process.env.CLIENT_ID, password: '' },
-      headers: { 'User-Agent': process.env.USER_AGENT, 'Content-Type': 'application/x-www-form-urlencoded' }
+      headers: { 
+        'User-Agent': process.env.USER_AGENT, 
+        'Content-Type': 'application/x-www-form-urlencoded' 
+      }
     });
 
     return response.data.access_token;
@@ -42,12 +45,15 @@ async function fetchSavedPosts() {
   if (!accessToken) return [];
 
   try {
-    const response = await axios.get('https://oauth.reddit.com/user/No_Studio1727/saved?limit=100', {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'User-Agent': process.env.USER_AGENT
+    const response = await axios.get(
+      'https://oauth.reddit.com/user/No_Studio1727/saved?limit=100',
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'User-Agent': process.env.USER_AGENT
+        }
       }
-    });
+    );
 
     console.log(`✅ Retrieved ${response.data.data.children.length} saved posts`);
 
@@ -57,9 +63,11 @@ async function fetchSavedPosts() {
       subreddit: post.data.subreddit,
       is_self: post.data.is_self,
       selftext_html: post.data.selftext_html,
+      selftext: post.data.selftext,
       is_video: post.data.is_video,
       media: post.data.media,
-      post_hint: post.data.post_hint
+      post_hint: post.data.post_hint,
+      permalink: `https://reddit.com${post.data.permalink}`
     }));
   } catch (err) {
     console.error('❌ Error fetching saved posts:', err.response?.data || err.message);
@@ -67,28 +75,38 @@ async function fetchSavedPosts() {
   }
 }
 
-// ---------- API endpoint for frontend ----------
+// ---------- API endpoint for random post ----------
 app.get('/api/shuffle', async (req, res) => {
-  savedPosts = await fetchSavedPosts();
+  if (!savedPosts || savedPosts.length === 0) {
+    savedPosts = await fetchSavedPosts();
+  }
+
   if (!savedPosts || savedPosts.length === 0) {
     return res.json({ error: 'No saved posts found' });
   }
 
-  currentIndex = 0;
-  res.json({ post: savedPosts[currentIndex] });
+  // Pick a random post
+  const randomIndex = Math.floor(Math.random() * savedPosts.length);
+  currentIndex = randomIndex;
+
+  res.json({ post: savedPosts[randomIndex] });
 });
 
-// Next post
+// ---------- Next post ----------
 app.get('/api/next', (req, res) => {
-  if (!savedPosts || savedPosts.length === 0) return res.json({ error: 'No posts loaded' });
+  if (!savedPosts || savedPosts.length === 0) {
+    return res.json({ error: 'No posts loaded' });
+  }
 
   currentIndex = (currentIndex + 1) % savedPosts.length;
   res.json({ post: savedPosts[currentIndex] });
 });
 
-// Previous post
+// ---------- Previous post ----------
 app.get('/api/prev', (req, res) => {
-  if (!savedPosts || savedPosts.length === 0) return res.json({ error: 'No posts loaded' });
+  if (!savedPosts || savedPosts.length === 0) {
+    return res.json({ error: 'No posts loaded' });
+  }
 
   currentIndex = (currentIndex - 1 + savedPosts.length) % savedPosts.length;
   res.json({ post: savedPosts[currentIndex] });

@@ -101,20 +101,12 @@ function prevPost() {
   }
 }
 
-// Shuffle button
-function shufflePosts() {
-  posts = shuffle(posts);
-  currentIndex = 0;
-  currentPost = posts[currentIndex];
-  displayPost(currentPost);
-}
 
 window.onload = loadPosts;
 
 // Hook up buttons
 document.getElementById('next-btn').addEventListener('click', nextPost);
 document.getElementById('prev-btn').addEventListener('click', prevPost);
-document.getElementById('shuffle-btn').addEventListener('click', shufflePosts);
 
 /*
 let currentPost = null;

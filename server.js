@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 let savedPosts = [];
-let currentIndex = Math.floor(Math.random() * posts.length);
+let currentIndex = 0;
 
 // Middleware
 app.use(cors());

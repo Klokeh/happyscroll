@@ -104,7 +104,7 @@ function prevPost() {
 // Shuffle button
 function shufflePosts() {
   posts = shuffle(posts);
-  currentIndex = 0;
+  currentIndex = 3;
   currentPost = posts[currentIndex];
   displayPost(currentPost);
 }

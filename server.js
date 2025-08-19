@@ -48,7 +48,7 @@ async function fetchSavedPosts() {
         'User-Agent': process.env.USER_AGENT
       }
     });
-
+    console.log("📦 Raw saved response:", JSON.stringify(response.data, null, 2));
     console.log(`✅ Retrieved ${response.data.data.children.length} saved posts`);
 
     return response.data.data.children.map(post => ({

@@ -6,7 +6,9 @@
   <style>
     body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
     .post { margin-bottom: 20px; }
-    button { margin: 5px; padding: 10px 20px; font-size: 16px; }
+    button { margin: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    #post-container { margin-top: 20px; }
+    img, video { margin-top: 15px; border-radius: 8px; }
   </style>
 </head>
 <body>
@@ -14,14 +16,13 @@
 
   <div id="post-container">
     <div id="loading-message">Loading...</div>
-    <h2 id="post-title"></h2>
-    <p>URL: <a id="post-url" target="_blank"></a></p>
-    <p>Permalink: <a id="post-permalink" target="_blank"></a></p>
   </div>
 
-  <button onclick="prevPost()">Previous</button>
-  <button onclick="nextPost()">Next</button>
-  <button onclick="loadPosts()">Shuffle Deck</button>
+  <div>
+    <button id="prev-btn">Previous</button>
+    <button id="next-btn">Next</button>
+    <button id="shuffle-btn">Shuffle Deck</button>
+  </div>
 
   <script src="script.js"></script>
 </body>

@@ -47,12 +47,12 @@ function displayPost(post) {
   const subreddit = document.createElement('p');
   subreddit.innerText = `Subreddit: r/${post.subreddit}`;
 
-  const permalink = document.createElement('p');
-  permalink.innerHTML = `<a href="${post.permalink}" target="_blank">View on Reddit</a>`;
+  //const permalink = document.createElement('p');
+  //permalink.innerHTML = `<a href="${post.permalink}" target="_blank">View on Reddit</a>`;
 
   postContainer.appendChild(title);
   postContainer.appendChild(subreddit);
-  postContainer.appendChild(permalink);
+ // postContainer.appendChild(permalink);
 
   // Content types
   if (post.is_self) {

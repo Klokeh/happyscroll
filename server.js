@@ -1,6 +1,7 @@
+// server.js
 const express = require('express');
 const axios = require('axios');
-const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,37 +9,34 @@ const PORT = process.env.PORT || 3000;
 let savedPosts = [];
 let currentIndex = 0;
 
-// Middleware to serve frontend
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Function to fetch a new access token using refresh token
+// ---------- Function to get Access Token ----------
 async function getAccessToken() {
   try {
-    const auth = Buffer.from(`${process.env.CLIENT_ID}:`).toString('base64');
-
-    const params = new URLSearchParams();
-    params.append('grant_type', 'refresh_token');
-    params.append('refresh_token', process.env.REFRESH_TOKEN);
+    const params = new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: process.env.REFRESH_TOKEN
+    });
 
     const response = await axios.post('https://www.reddit.com/api/v1/access_token', params, {
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'User-Agent': process.env.USER_AGENT,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
+      auth: { username: process.env.CLIENT_ID, password: '' }, // installed app has no secret
+      headers: { 'User-Agent': process.env.USER_AGENT, 'Content-Type': 'application/x-www-form-urlencoded' }
     });
-console.log("✅ Access token retrieved:", response.data);
- console.log("📦 Raw saved response:", JSON.stringify(response.data, null, 2));
+
+    // Logs for debugging
+    console.log('🔑 Raw token response:', JSON.stringify(response.data, null, 2));
+    console.log('✅ Access token retrieved:', response.data.access_token);
+
     return response.data.access_token;
   } catch (err) {
-    console.error('❌ Error fetching access token:', err.response?.data || err.message);
+    console.error('❌ Error retrieving access token:', err.response?.data || err.message);
     return null;
   }
 }
 
-// Fetch saved posts from Reddit
+// ---------- Function to fetch saved posts ----------
 async function fetchSavedPosts() {
-console.log("🔹 fetchSavedPosts() called");
+  console.log("🔹 fetchSavedPosts() called");
+
   const accessToken = await getAccessToken();
   if (!accessToken) return [];
 
@@ -49,9 +47,10 @@ console.log("🔹 fetchSavedPosts() called");
         'User-Agent': process.env.USER_AGENT
       }
     });
-   
-    console.log(`✅ Retrieved ${response.data.data.children.length} saved posts`);
+
     console.log('📦 Raw Reddit response:', JSON.stringify(response.data, null, 2));
+    console.log(`✅ Retrieved ${response.data.data.children.length} saved posts`);
+
     return response.data.data.children.map(post => ({
       title: post.data.title,
       url: post.data.url,
@@ -64,33 +63,40 @@ console.log("🔹 fetchSavedPosts() called");
   }
 }
 
-// API: Shuffle deck
+// ---------- API endpoint for frontend ----------
 app.get('/api/shuffle', async (req, res) => {
   savedPosts = await fetchSavedPosts();
-  if (savedPosts.length === 0) return res.json({ error: 'No saved posts found' });
+  if (!savedPosts || savedPosts.length === 0) {
+    return res.json({ error: 'No saved posts found' });
+  }
 
   currentIndex = 0;
   res.json({ post: savedPosts[currentIndex] });
 });
 
-// API: Next post
+// Next post
 app.get('/api/next', (req, res) => {
-  if (savedPosts.length === 0) return res.json({ error: 'No saved posts loaded' });
+  if (!savedPosts || savedPosts.length === 0) return res.json({ error: 'No posts loaded' });
 
   currentIndex = (currentIndex + 1) % savedPosts.length;
   res.json({ post: savedPosts[currentIndex] });
 });
 
-// API: Previous post
+// Previous post
 app.get('/api/prev', (req, res) => {
-  if (savedPosts.length === 0) return res.json({ error: 'No saved posts loaded' });
+  if (!savedPosts || savedPosts.length === 0) return res.json({ error: 'No posts loaded' });
 
   currentIndex = (currentIndex - 1 + savedPosts.length) % savedPosts.length;
   res.json({ post: savedPosts[currentIndex] });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Happyscroll running on port ${PORT}`);
-});
+// ---------- Serve frontend ----------
+app.use(express.static('public'));
+
+// ---------- Force token fetch on startup ----------
 getAccessToken();
+
+// ---------- Start server ----------
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});

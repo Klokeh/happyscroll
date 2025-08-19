@@ -67,11 +67,7 @@ async function fetchSavedPosts() {
     return [];
   }
 }
-----------------------------------------------------------------------------------------------------
-### Update `api/shuffle`
-The key change is in the `/api/shuffle` endpoint. The `Math.random()` function is used to get a random index from the `savedPosts` array.
 
-```javascript
 // ---------- API endpoint for frontend ----------
 app.get('/api/shuffle', async (req, res) => {
   savedPosts = await fetchSavedPosts();
@@ -79,9 +75,7 @@ app.get('/api/shuffle', async (req, res) => {
     return res.json({ error: 'No saved posts found' });
   }
 
-  // Select a random post
-  const randomIndex = Math.floor(Math.random() * savedPosts.length);
-  currentIndex = randomIndex;
+  currentIndex = 0;
   res.json({ post: savedPosts[currentIndex] });
 });
 

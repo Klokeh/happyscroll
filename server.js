@@ -25,6 +25,7 @@ async function getAccessToken() {
     // Logs for debugging
     console.log('🔑 Raw token response:', JSON.stringify(response.data, null, 2));
     console.log('✅ Access token retrieved:', response.data.access_token);
+    console.log('⚡ Access token (debug scopes):', response.data.scope);
 
     return response.data.access_token;
   } catch (err) {
@@ -41,7 +42,7 @@ async function fetchSavedPosts() {
   if (!accessToken) return [];
 
   try {
-    const response = await axios.get('https://oauth.reddit.com/user/me/saved?limit=100', {
+    const response = await axios.get('https://oauth.reddit.com/user/No_Studio1727/saved?limit=100', {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'User-Agent': process.env.USER_AGENT

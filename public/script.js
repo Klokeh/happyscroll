@@ -28,7 +28,7 @@ async function loadPosts() {
   // Store posts in array if backend sends them, else wrap single post
   posts = Array.isArray(data.posts) ? data.posts : [data.post];
   posts = shuffle(posts); // shuffle once at load
-  currentIndex = 3;
+  currentIndex = 0;
   currentPost = posts[currentIndex];
   displayPost(currentPost);
 }

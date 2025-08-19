@@ -102,8 +102,4 @@ function prevPost() {
 
 window.onload = loadPosts;
 
-// Hook up buttons
-document.getElementById('next-btn').addEventListener('click', nextPost);
-document.getElementById('prev-btn').addEventListener('click', prevPost);
-
 

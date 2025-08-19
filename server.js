@@ -50,7 +50,7 @@ async function fetchSavedPosts() {
     });
    
     console.log(`✅ Retrieved ${response.data.data.children.length} saved posts`);
-
+    console.log('📦 Raw Reddit response:', JSON.stringify(response.data, null, 2));
     return response.data.data.children.map(post => ({
       title: post.data.title,
       url: post.data.url,

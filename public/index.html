@@ -1,22 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>HappyScroll</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
-    .post { margin-bottom: 20px; }
-    button { margin: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
-    #post-container { margin-top: 20px; }
-    img, video { margin-top: 15px; border-radius: 8px; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 50px;
+    }
+    #post-container {
+      margin-bottom: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    img, video {
+      margin-top: 10px;
+      border-radius: 8px;
+      max-width: 100%;
+      height: auto;
+    }
   </style>
 </head>
 <body>
   <h1>HappyScroll</h1>
-
-  <div id="post-container">
-    <div id="loading-message">Loading...</div>
-  </div>
+  <div id="loading-message">Loading post...</div>
+  <div id="post-container"></div>
 
   <div>
     <button id="prev-btn">Previous</button>

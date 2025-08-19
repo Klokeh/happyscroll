@@ -11,30 +11,18 @@
 </head>
 <body>
   <h1>HappyScroll</h1>
-  <div id="post" class="post">Loading...</div>
-  <button id="prev">Previous</button>
-  <button id="next">Next</button>
-  <button id="shuffle">Shuffle Deck</button>
-<script src="script.js"></script>
-  <script>
-    let currentPost = null;
 
-    async function loadPost(url) {
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.error) {
-        document.getElementById('post').innerText = data.error;
-      } else {
-        currentPost = data.post.data;
-        document.getElementById('post').innerHTML = `<a href="https://reddit.com${currentPost.permalink}" target="_blank">${currentPost.title}</a>`;
-      }
-    }
+  <div id="post-container">
+    <div id="loading-message">Loading...</div>
+    <h2 id="post-title"></h2>
+    <p>URL: <a id="post-url" target="_blank"></a></p>
+    <p>Permalink: <a id="post-permalink" target="_blank"></a></p>
+  </div>
 
-    document.getElementById('next').addEventListener('click', () => loadPost('/api/next'));
-    document.getElementById('prev').addEventListener('click', () => loadPost('/api/prev'));
-    document.getElementById('shuffle').addEventListener('click', () => loadPost('/api/load'));
+  <button onclick="prevPost()">Previous</button>
+  <button onclick="nextPost()">Next</button>
+  <button onclick="loadPosts()">Shuffle Deck</button>
 
-    loadPost('/api/load');
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>

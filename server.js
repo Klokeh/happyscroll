@@ -28,7 +28,7 @@ async function getAccessToken() {
       }
     });
 console.log("✅ Access token retrieved:", response.data);
-
+ console.log("📦 Raw saved response:", JSON.stringify(response.data, null, 2));
     return response.data.access_token;
   } catch (err) {
     console.error('❌ Error fetching access token:', err.response?.data || err.message);
@@ -48,7 +48,7 @@ async function fetchSavedPosts() {
         'User-Agent': process.env.USER_AGENT
       }
     });
-    console.log("📦 Raw saved response:", JSON.stringify(response.data, null, 2));
+   
     console.log(`✅ Retrieved ${response.data.data.children.length} saved posts`);
 
     return response.data.data.children.map(post => ({

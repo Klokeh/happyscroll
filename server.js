@@ -38,6 +38,7 @@ console.log("✅ Access token retrieved:", response.data);
 
 // Fetch saved posts from Reddit
 async function fetchSavedPosts() {
+console.log("🔹 fetchSavedPosts() called");
   const accessToken = await getAccessToken();
   if (!accessToken) return [];
 

@@ -1,5 +1,96 @@
 // public/script.js
+let currentPost = null;
 
+// Fetch a random post from backend
+async function fetchRandomPost() {
+  try {
+    const res = await fetch('https://happyscroll.onrender.com/api/shuffle');
+    const data = await res.json();
+
+    if (data.error) {
+      document.getElementById('post-container').innerText = data.error;
+      return;
+    }
+
+    currentPost = data.post;
+    displayPost(currentPost);
+  } catch (err) {
+    console.error('Error fetching random post:', err);
+  }
+}
+
+// Fetch next post from backend
+async function nextPost() {
+  try {
+    const res = await fetch('https://happyscroll.onrender.com/api/next');
+    const data = await res.json();
+
+    if (data.error) {
+      document.getElementById('post-container').innerText = data.error;
+      return;
+    }
+
+    currentPost = data.post;
+    displayPost(currentPost);
+  } catch (err) {
+    console.error('Error fetching next post:', err);
+  }
+}
+
+// Fetch previous post from backend
+async function prevPost() {
+  try {
+    const res = await fetch('https://happyscroll.onrender.com/api/prev');
+    const data = await res.json();
+
+    if (data.error) {
+      document.getElementById('post-container').innerText = data.error;
+      return;
+    }
+
+    currentPost = data.post;
+    displayPost(currentPost);
+  } catch (err) {
+    console.error('Error fetching previous post:', err);
+  }
+}
+
+// Display a post in the page
+function displayPost(post) {
+  const postContainer = document.getElementById('post-container');
+  const loadingMessage = document.getElementById('loading-message');
+
+  if (loadingMessage) loadingMessage.style.display = 'none';
+  if (postContainer) postContainer.innerHTML = '';
+
+  // Title
+  const title = document.createElement('h2');
+  title.innerText = post.title;
+
+  // Subreddit
+  const subreddit = document.createElement('p');
+  subreddit.innerText = `Subreddit: r/${post.subreddit}`;
+
+  // Permalink
+  const permalink = document.createElement('p');
+  permalink.innerHTML = `<a href="${post.permalink}" target="_blank">View on Reddit</a>`;
+
+  postContainer.appendChild(title);
+  postContainer.appendChild(subreddit);
+  postContainer.appendChild(permalink);
+
+  // Content types
+  if (post.is_self) {
+    const selfText = document.createElement('div');
+    selfText.innerHTML = post.selftext_html || post.selftext || '';
+    postContainer.appendChild(selfText);
+  } else if (post.url.match(/\.(jpeg|jpg|gif|png)$/)) {
+    const image = document.createElement('img');
+    image.src = post.url;
+    image.style.maxWidth = '100%';
+    image.style.height = 'auto';
+
+/*
 let currentPost = null;
 let posts = [];
 let currentIndex = 0;
@@ -107,4 +198,4 @@ window.onload = loadPosts;
 document.getElementById('next-btn').addEventListener('click', nextPost);
 document.getElementById('prev-btn').addEventListener('click', prevPost);
 
-
+*/

@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 let savedPosts = [];
-let currentIndex = 0;
+let currentIndex = Math.floor(Math.random() * posts.length);
 
 // Middleware
 app.use(cors());
@@ -54,7 +54,6 @@ async function fetchSavedPosts() {
     return response.data.data.children.map(post => ({
       title: post.data.title,
       url: post.data.url,
-      permalink: `https://reddit.com${post.data.permalink}`,
       subreddit: post.data.subreddit,
       is_self: post.data.is_self,
       selftext_html: post.data.selftext_html,
